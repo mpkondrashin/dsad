@@ -1,10 +1,10 @@
-# DSAB Deep Security debug logs anonymizer
+# DSAD Deep Security Debug Logs Anonymizer
 
-**DSAB provides ability to share Deep Security agent debug logs with altered ip addresses and domain names**
+**DSAD provides ability to share Deep Security agent debug logs with altered ip addresses and domain names**
 
 ## Usage
 
-After generating debug using dsa_control -d command use dsab to anonymize debug logs.
+After generating debug using dsa_control -d command use dsad to anonymize debug logs.
 
 ## Command line parameters
 
@@ -15,4 +15,4 @@ After generating debug using dsa_control -d command use dsab to anonymize debug 
 **-d value** - provide company domain name to anonymize all subdomains. For example: "company.com". "host1" for host1.company.com will be anonymized. This option can be used multiple times.
 
 **-h value** - provide hostnames to anonymize. For example: "host1" for host1.company.com will be anonymized. This option can be used multiple times.
- 
+
