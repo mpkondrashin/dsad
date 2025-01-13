@@ -3,7 +3,7 @@ package main
 import (
 	"crypto/sha256"
 	"database/sql"
-	"encoding/binary"
+	"encoding/base32"
 	"fmt"
 	"io"
 	"iter"
@@ -51,7 +51,7 @@ func (a *AnonymizerCodeword) IP(ipString string) string {
 	}
 	ip = ip.To4()
 	if ip == nil {
-		fmt.Println("Not an IPv4 address")
+		//fmt.Println("Not an IPv4 address")
 		return ipString
 	}
 	if ip[0] == 10 {
@@ -78,22 +78,23 @@ func (a *AnonymizerCodeword) IP(ipString string) string {
 	return ipString
 }
 
+func Encode(d []byte) string {
+	encoder := base32.NewEncoding("abcdefghijklmnopqrstuvwxyz234567")
+	return encoder.EncodeToString(d)
+}
+
 func (a *AnonymizerCodeword) Hostname(hostname string) string {
 	hash := sha256.Sum256([]byte(a.codeword + hostname))
-	seed := binary.BigEndian.Uint16(hash[:])
-	value := fmt.Sprintf("Host%05d", seed)
+	value := "H" + Encode(hash[:])[:8]
 	if a.statistics != nil {
 		a.statistics.Add(hostname, value)
-
 	}
 	return value
 }
 
 func (a *AnonymizerCodeword) Domain(domain string) string {
 	hash := sha256.Sum256([]byte(a.codeword + domain))
-	seed := binary.BigEndian.Uint16(hash[:])
-	value := fmt.Sprintf("Domain%05d", seed)
-	return value
+	return "D" + Encode(hash[:])[:8]
 }
 
 func (a *AnonymizerCodeword) AnonymyzeIPs(data string) string {
@@ -101,16 +102,6 @@ func (a *AnonymizerCodeword) AnonymyzeIPs(data string) string {
 		return a.IP(match)
 	})
 }
-
-// domain.com <- user
-// www.domain.com <- found
-
-// a.b.c.d
-// 0 1 2 3
-// b.c.d
-// c.d
-// 0 1
-//
 
 func (a *AnonymizerCodeword) CheckSuffix(user, found []string) bool {
 	for i := 0; i < len(found); i++ {
@@ -178,7 +169,6 @@ func (a *AnonymizerCodeword) FilterFilenames(dst io.Writer, src io.Reader) error
 		return fmt.Errorf("failed to copy file contents: %v", err)
 	}
 	if strings.HasPrefix(sb.String(), SQLitePrefix) {
-		//		log.Println("XXX SQLITE found")
 		return a.AnonymizeSQLite(dst, []byte(sb.String()))
 	}
 	resultData := a.AnonymizeString(sb.String())
@@ -194,38 +184,31 @@ func (a *AnonymizerCodeword) AnonymizeSQLite(dst io.Writer, data []byte) error {
 	if err != nil {
 		return err
 	}
-	//defer os.RemoveAll(tempDir)
+	defer os.RemoveAll(tempDir)
 	fileName := "temp.sqlite"
 	filePath := filepath.Join(tempDir, fileName)
-	//log.Println("XXX File path:", filePath)
 	if err := os.WriteFile(filePath, data, 0644); err != nil {
 		return err
 	}
-	//log.Println("XXX Wrote data")
 	if err := a.FilterSQLite(filePath); err != nil {
 		return err
 	}
-	//log.Println("XXX Filter done")
 	file, err := os.Open(filePath)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 	_, err = io.Copy(dst, file)
-	//log.Printf("XXX Wrote %d bytes", n)
 	return err
 }
 
 func (a *AnonymizerCodeword) FilterSQLite(database string) error {
 	db, err := sql.Open("sqlite3", database)
-	//log.Printf("XXX opened: %v (%v)", db, err)
 	if err != nil {
 		return err
 	}
 	defer db.Close()
-	//log.Printf("XXX opened: %s", database)
 	for tableName, err := range SQLiteIterateTables(db) {
-		//log.Printf("XXX tableName: %s", tableName)
 		if err != nil {
 			return err
 		}
@@ -237,8 +220,7 @@ func (a *AnonymizerCodeword) FilterSQLite(database string) error {
 }
 
 func (a *AnonymizerCodeword) FilterSQLiteTable(db *sql.DB, tableName string) error {
-	//log.Printf("XXX FilterSQLiteTable: %s", tableName)
-	textColumns, err := SQLiteTableColumns(db, tableName) //, []string{"TEXT", "BLOB"})
+	textColumns, err := SQLiteTableColumns(db, tableName)
 	if err != nil {
 		return err
 	}
@@ -281,7 +263,6 @@ func (a *AnonymizerCodeword) FilterSQLiteTable(db *sql.DB, tableName string) err
 			}
 			w := strings.Join(where, " AND ")
 			updateQuery := fmt.Sprintf("UPDATE %s SET %s WHERE %s", tableName, s, w) //  set[:len(set)-2], where[:len(where)-5])
-			fmt.Println(updateQuery)
 			if _, err := db.Exec(updateQuery); err != nil {
 				return err
 			}
@@ -314,7 +295,7 @@ func SQLiteIterateTables(db *sql.DB) iter.Seq2[string, error] {
 	}
 }
 
-func SQLiteTableColumns(db *sql.DB, tableName string /*, types []string*/) ([]string, error) {
+func SQLiteTableColumns(db *sql.DB, tableName string) ([]string, error) {
 	columnRows, err := db.Query(fmt.Sprintf("PRAGMA table_info(%s)", tableName))
 	if err != nil {
 		return nil, err
@@ -333,11 +314,7 @@ func SQLiteTableColumns(db *sql.DB, tableName string /*, types []string*/) ([]st
 		if err := columnRows.Scan(&cid, &name, &dataType, &notNull, &dfltValue, &pk); err != nil {
 			return nil, err
 		}
-		//for _, t := range types {
-		//		if strings.EqualFold(dataType, t) {
 		result = append(result, name)
-		//		}
-		//	}
 	}
 	return result, nil
 }

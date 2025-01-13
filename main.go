@@ -16,7 +16,7 @@ import (
 var (
 	version = "1.0.0"
 
-	heading = ` ______________________________________________________________________________
+	banner = ` ______________________________________________________________________________
 ||----------------------------------------------------------------------------||
 ||                  Deep Security Agent Debug Anonymizer                      ||
 ||                              Version %6s                                ||
@@ -56,16 +56,16 @@ func (s *List) Set(value string) error {
 }
 
 func main() {
-	fmt.Printf(heading, version)
+	fmt.Printf(banner, version)
 
 	var debugFilePath string
 	flag.StringVar(&debugFilePath, "i", "", "File path to debug file")
 	var hostnamesList List
-	flag.Var(&hostnamesList, "h", "Hostnames to anonymize")
+	flag.Var(&hostnamesList, "h", "Hostnames to anonymize (Can be used multiple times)")
 	var domainsList List
-	flag.Var(&domainsList, "d", "Domains to anonymize")
+	flag.Var(&domainsList, "d", "Domains to anonymize (Can be used multiple times)")
 	var codeword string
-	flag.StringVar(&codeword, "c", "", "Code word")
+	flag.StringVar(&codeword, "c", "", "Codeword")
 	flag.Parse()
 
 	if debugFilePath == "" || codeword == "" {
@@ -75,7 +75,6 @@ func main() {
 
 	fmt.Printf("Hostnames list: %v\n", strings.Join(hostnamesList, ", "))
 	fmt.Println("Processing the debug file...")
-	// Anna Nikolay she is lahem laser
 	anonymizer := NewAnonymizerCodeword(codeword)
 	for _, hostname := range hostnamesList {
 		anonymizer.AddHostname(hostname)
