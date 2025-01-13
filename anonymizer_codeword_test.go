@@ -15,13 +15,13 @@ func TestAnonymizeDomains(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{" abc.test ", " Domain22475.test "},
-		{" abc.abc.test ", " Domain22475.Domain22475.test "},
-		{" abc.def.test ", " Domain22475.Domain33968.test "},
+		{" abc.test ", " Dk7fzqdsb.test "},
+		{" abc.abc.test ", " Dk7fzqdsb.Dk7fzqdsb.test "},
+		{" abc.def.test ", " Dk7fzqdsb.Dqsybk4cy.test "},
 		{" somedomain.com ", " somedomain.com "},
 		{" ftp.company.com ", " ftp.company.com "},
 		{" domain.com ", " domain.com "},
-		{" www.domain.com ", " Domain07240.domain.com "},
+		{" www.domain.com ", " Ddrebczzf.domain.com "},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.input, func(t *testing.T) {
