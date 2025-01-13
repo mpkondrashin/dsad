@@ -28,7 +28,7 @@ var (
 ||  the author be liable for any damages whatsoever, including, without       ||
 ||  limitation, damages for loss of profits, business interruption, or any    ||
 ||  other commercial damages or losses.                                       ||
-||  For more information, please visit https://github.com/mkondrashin/dsab")  ||
+||  For more information, please visit https://github.com/mpkondrashin/dsad") ||
 ||  This software is distributed without any warranty.                        ||
 ||  By using this software, you are agreeing to the terms of this license.    ||
 ||____________________________________________________________________________||
