@@ -1,4 +1,4 @@
-# DSAD Deep Security Debug Logs Anonymizer
+# DSAD - Deep Security Debug Logs Anonymizer
 
 **DSAD provides ability to share Deep Security agent debug logs with altered ip addresses and domain names**
 
