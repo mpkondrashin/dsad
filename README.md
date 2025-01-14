@@ -2,6 +2,8 @@
 
 **DSAD provides ability to share Deep Security agent debug logs with altered ip addresses and domain names**
 
+<img src="logo.png" alt="DSAD Logo" width="50%"/>
+
 DSAD features include:
 1. Unpack debug log ZIP file and process all files one by one.
 2. Anonymize private ip addresses, given list of hostnames and subdomains of given domains list.
