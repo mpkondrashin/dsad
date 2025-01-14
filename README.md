@@ -1,8 +1,8 @@
 # DSAD - Deep Security Debug Logs Anonymizer
 
-**DSAD provides ability to share Deep Security agent debug logs with altered ip addresses and domain names**
-
 <img src="logo.png" alt="DSAD Logo" width="50%"/>
+
+**DSAD provides ability to share Deep Security agent debug logs with altered ip addresses and domain names**
 
 DSAD features include:
 1. Unpack debug log ZIP file and process all files one by one.
