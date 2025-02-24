@@ -29,7 +29,7 @@ After generating debug using dsa_control -d command use dsad to anonymize debug 
 
 After running dsa_contol -d on the endpoint named Pluto in the network with local domains tech.local  and office.local we get debug log file named 1736335478.zip. Anonymization command will look like this:
 ```commandline
-dsad.exe -i 1736335478.zip -h pluto -i 1736335478.zip -c 123456 -d tech.local -d office.local
+dsad.exe -i 1736335478.zip -h pluto -c 123456 -d tech.local -d office.local
 ```
 
-One can add more -h and -d options to anonymize more hostnames and domains.
+Options -h and -d options can be used multiply times to anonymize more hostnames and domains.
